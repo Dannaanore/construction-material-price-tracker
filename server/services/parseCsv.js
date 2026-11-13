@@ -1,10 +1,3 @@
-/*
-* parseCsv.js
-*    - read and clean CSV contents
-*    - return JavaScript data
-*
-*/
-
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import Papa from 'papaparse';
@@ -28,6 +21,11 @@ const MATERIALS = {
     }
 };
 
+/*
+* Read and parse the CSV file.
+* Return an array of {date, value } objects.
+*
+*/
 export async function loadMaterialData(material) {
     // Get material info
     const materialInfo = MATERIALS[material];
@@ -43,9 +41,6 @@ export async function loadMaterialData(material) {
     // Read file as string
     const csvContentString = await fs.readFile(filePath, 'utf8');
 
-    // TEMP: Return for testing
-    // return csvContentString.slice(0, 200);
-
     // Parse Data
     const parsedData = Papa.parse(csvContentString, {
         header: true,
@@ -59,9 +54,9 @@ export async function loadMaterialData(material) {
             value: Number(row[materialInfo.seriesId])
         };
     })
-    // Keep only valid price index values > 0
-    .filter((row) => Number.isFinite(row.value) && row.value > 0)
-    .sort((a, b) => a.date.localeCompare(b.date));
+        // Keep only valid price index values > 0
+        .filter((row) => Number.isFinite(row.value) && row.value > 0)
+        .sort((a, b) => a.date.localeCompare(b.date));
 
     return cleanedData;
 };
